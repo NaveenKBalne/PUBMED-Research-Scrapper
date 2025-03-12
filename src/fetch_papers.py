@@ -389,6 +389,7 @@ def extract_article_details(query):
     return results
 
 def extract_affiliations(tree):
+    """Extracts non-academic and company affiliations from the XML tree."""
     non_academic_authors = []
     company_affiliations = []
     seen_affiliations = set()
@@ -406,8 +407,10 @@ def extract_affiliations(tree):
                 company_affiliations.append(affiliation.text.strip())
             elif not re.search(r"(university|college|institute|hospital|center)", affiliation_text):
 
+                cleaned_affiliation = affiliation_text
+
                 #Remove address like data.
-                cleaned_affiliation = re.sub(r",\s*\d+\s+[A-Z][a-z]+(\s+[A-Z][a-z]+)*\s*$", "", affiliation.text.strip())
+                cleaned_affiliation = re.sub(r",\s*\d+\s+[A-Z][a-z]+(\s+[A-Z][a-z]+)*\s*$", "", cleaned_affiliation)
 
                 #Remove extra punctuation.
                 cleaned_affiliation = re.sub(r"[,.]+$", "", cleaned_affiliation)
@@ -421,11 +424,30 @@ def extract_affiliations(tree):
                 #Remove redundant locations.
                 cleaned_affiliation = re.sub(r"amsterdam, the netherlands", "", cleaned_affiliation, flags=re.IGNORECASE)
 
+                #Remove leftover periods.
+                cleaned_affiliation = re.sub(r"\.\s*\.", ".", cleaned_affiliation)
+
+                #Remove any trailing or leading periods
+                cleaned_affiliation = cleaned_affiliation.strip('.')
+
+                #Remove empty values.
+                cleaned_affiliation = re.sub(r"^\s*$", "", cleaned_affiliation)
+
+                #Remove empty values between commas.
+                cleaned_affiliation = re.sub(r",\s*,+", ",", cleaned_affiliation)
+
                 #Truncate long strings.
                 if len(cleaned_affiliation) > 200:
                     cleaned_affiliation = cleaned_affiliation[:200] + "..."
 
-                non_academic_authors.append(cleaned_affiliation)
+                if cleaned_affiliation:
+                    non_academic_authors.append(cleaned_affiliation)
+            else:
+                cleaned_affiliation = "Academic Institution"
+
+            # Debugging print statements
+            print(f"Affiliation Text: {affiliation_text}")
+            print(f"Cleaned Affiliation: {cleaned_affiliation}")
 
     return non_academic_authors, company_affiliations
 
