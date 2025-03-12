@@ -1,0 +1,24 @@
+[build-system]
+requires = ["setuptools>=61.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "PUBMED-Research-Scrapper"
+version = "0.0.1"  
+authors = [
+  { name = "Naveen Kumar Balne", email = "naveenkumar1212000@gamil.com" }, 
+]
+description = "A Python module to extract research paper details from PubMed."
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "requests",
+    "pandas",
+]
+[project.urls]
+"Homepage" = "https://github.com/NaveenKBalne"  
+"Bug Tracker" = "https://github.com/NaveenKBalne/PUBMED-Research-Scrapper"
